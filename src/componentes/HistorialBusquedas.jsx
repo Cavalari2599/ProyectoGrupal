@@ -1,6 +1,9 @@
+import { nombreCompleto } from '../utilidades/formato.js'
+
 /**
  * Funcionalidad 3: historial de búsquedas.
- * Lista las últimas ciudades; al hacer clic en una, se vuelve a consultar.
+ * Lista las últimas ciudades (con estado y país); al hacer clic en una se
+ * vuelve a consultar usando sus coordenadas, sin ambigüedad.
  * No se renderiza nada si el historial está vacío.
  */
 export function HistorialBusquedas({ historial, alSeleccionar, alLimpiar }) {
@@ -16,13 +19,13 @@ export function HistorialBusquedas({ historial, alSeleccionar, alLimpiar }) {
       </div>
       <ul className="historial__lista">
         {historial.map((ciudad) => (
-          <li key={ciudad}>
+          <li key={`${ciudad.lat},${ciudad.lon}`}>
             <button
               type="button"
               className="historial__item"
               onClick={() => alSeleccionar(ciudad)}
             >
-              {ciudad}
+              {nombreCompleto(ciudad)}
             </button>
           </li>
         ))}

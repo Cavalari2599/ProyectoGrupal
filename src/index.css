@@ -1,35 +1,24 @@
-/* Reset mínimo y variables de tema. Sin librerías externas (requisito). */
+/* Variables base y reset. El color de fondo real lo pinta <FondoClima>
+   según el clima; aquí solo queda un respaldo y los estilos comunes.
+   Sin librerías externas (requisito del proyecto). */
 :root {
-  --fondo: #eef3fb;
-  --fondo-degradado: linear-gradient(160deg, #6aa9ff 0%, #a0c4ff 45%, #eef3fb 100%);
-  --superficie: #ffffff;
-  --texto: #1f2933;
-  --texto-suave: #6b7280;
-  --acento: #2563eb;
-  --acento-contraste: #ffffff;
-  --borde: #e2e8f0;
-  --error: #dc2626;
-  --radio: 16px;
-  --sombra: 0 12px 30px rgba(15, 23, 42, 0.12);
+  --texto: #ffffff;
+  --texto-suave: rgba(255, 255, 255, 0.78);
+
+  /* Superficies tipo "vidrio" (glassmorphism), legibles sobre cualquier clima. */
+  --vidrio: rgba(255, 255, 255, 0.12);
+  --vidrio-fuerte: rgba(255, 255, 255, 0.22);
+  --vidrio-borde: rgba(255, 255, 255, 0.28);
+
+  --error: #ffe0e0;
+  --error-fondo: rgba(190, 30, 30, 0.4);
+
+  --radio: 18px;
+  --sombra: 0 16px 40px rgba(0, 0, 0, 0.28);
 
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   color: var(--texto);
   -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fondo: #0f172a;
-    --fondo-degradado: linear-gradient(160deg, #1e3a8a 0%, #1e293b 55%, #0f172a 100%);
-    --superficie: #1e293b;
-    --texto: #e2e8f0;
-    --texto-suave: #94a3b8;
-    --acento: #60a5fa;
-    --acento-contraste: #0f172a;
-    --borde: #334155;
-    --error: #f87171;
-    --sombra: 0 12px 30px rgba(0, 0, 0, 0.45);
-  }
 }
 
 * {
@@ -39,12 +28,12 @@
 body {
   margin: 0;
   min-height: 100svh;
-  background: var(--fondo-degradado);
-  background-attachment: fixed;
+  background: #1b2a4a; /* respaldo mientras carga el fondo temático */
 }
 
 button {
   font: inherit;
+  color: inherit;
   cursor: pointer;
 }
 

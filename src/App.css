@@ -1,29 +1,192 @@
-/* Estilos de la app. Clases en español y agrupadas por funcionalidad,
-   para que cada bloque se corresponda con un componente (sin librerías UI). */
+/* Estilos de la app. Clases en español, agrupadas por funcionalidad para que
+   cada bloque se corresponda con un componente. Sin librerías de UI externas. */
 
-/* ---------- Layout principal (mobile-first y responsivo) ---------- */
+/* ===================== Fondo temático ===================== */
+.fondo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  transition: background 0.6s ease;
+}
+
+/* Velo oscuro: asegura contraste del texto blanco sobre climas claros. */
+.fondo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.fondo--despejado-dia {
+  background: linear-gradient(180deg, #2b6fd6 0%, #5fa8e8 45%, #bfe3ff 100%);
+}
+.fondo--despejado-noche {
+  background: linear-gradient(180deg, #060b1f 0%, #122047 55%, #1d3163 100%);
+}
+.fondo--nubes-dia {
+  background: linear-gradient(180deg, #5b6c80 0%, #8ea3b8 50%, #c4d2de 100%);
+}
+.fondo--nubes-noche {
+  background: linear-gradient(180deg, #141a26 0%, #283a4f 55%, #3a5066 100%);
+}
+.fondo--lluvia {
+  background: linear-gradient(180deg, #2a3a4a 0%, #3f5468 55%, #5a7186 100%);
+}
+.fondo--tormenta {
+  background: linear-gradient(180deg, #0e1626 0%, #1f2d44 100%);
+}
+.fondo--nieve {
+  background: linear-gradient(180deg, #7e98b6 0%, #b9cde2 50%, #e7f1fb 100%);
+}
+.fondo--niebla {
+  background: linear-gradient(180deg, #8a949d 0%, #b3bcc4 50%, #d9dee2 100%);
+}
+
+/* ===================== Efectos animados ===================== */
+.capa-particulas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Lluvia */
+.gota {
+  position: absolute;
+  top: -10%;
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.55));
+  animation: caer linear infinite;
+}
+@keyframes caer {
+  to {
+    transform: translateY(115vh);
+  }
+}
+
+/* Nieve */
+.copo {
+  position: absolute;
+  top: -5%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  animation: nevar linear infinite;
+}
+@keyframes nevar {
+  from {
+    transform: translateY(-5vh) translateX(0);
+  }
+  to {
+    transform: translateY(110vh) translateX(22px);
+  }
+}
+
+/* Estrellas */
+.estrella {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: titilar 2s ease-in-out infinite alternate;
+}
+@keyframes titilar {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Nubes */
+.nube {
+  position: absolute;
+  left: 0;
+  width: 120px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 50px;
+  filter: blur(4px);
+  animation: flotar linear infinite;
+}
+.nube::before,
+.nube::after {
+  content: '';
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+.nube::before {
+  width: 55px;
+  height: 55px;
+  top: -22px;
+  left: 18px;
+}
+.nube::after {
+  width: 70px;
+  height: 70px;
+  top: -32px;
+  right: 18px;
+}
+@keyframes flotar {
+  from {
+    transform: translateX(-20vw) scale(var(--escala, 1));
+  }
+  to {
+    transform: translateX(140vw) scale(var(--escala, 1));
+  }
+}
+
+/* Sol */
+.sol {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #fff7d6 0%,
+    #ffe16b 45%,
+    rgba(255, 225, 107, 0) 72%
+  );
+  animation: brillar 4s ease-in-out infinite alternate;
+}
+@keyframes brillar {
+  from {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* ===================== Layout principal ===================== */
 .app {
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 32px 16px 64px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .app__titulo {
   margin: 0;
   text-align: center;
-  font-size: 1.9rem;
-  color: var(--texto);
+  font-size: 2rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 .app__resultado {
   min-height: 120px;
 }
 
-/* ---------- Funcionalidad 1: buscador ---------- */
+/* ===================== Funcionalidad 1: buscador ===================== */
 .barra-busqueda {
   display: flex;
   gap: 8px;
@@ -31,34 +194,93 @@
 
 .barra-busqueda__campo {
   flex: 1;
-  padding: 12px 14px;
-  border: 1px solid var(--borde);
+  padding: 13px 16px;
+  border: 1px solid var(--vidrio-borde);
   border-radius: var(--radio);
-  background: var(--superficie);
+  background: var(--vidrio);
+  backdrop-filter: blur(8px);
   color: var(--texto);
 }
 
+.barra-busqueda__campo::placeholder {
+  color: var(--texto-suave);
+}
+
 .barra-busqueda__campo:focus-visible {
-  outline: 2px solid var(--acento);
+  outline: 2px solid #ffffff;
   outline-offset: 1px;
 }
 
 .barra-busqueda__boton {
-  padding: 12px 18px;
-  border: none;
+  padding: 13px 20px;
+  border: 1px solid var(--vidrio-borde);
   border-radius: var(--radio);
-  background: var(--acento);
-  color: var(--acento-contraste);
+  background: var(--vidrio-fuerte);
+  backdrop-filter: blur(8px);
   font-weight: 600;
-  transition: opacity 0.2s;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.barra-busqueda__boton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.barra-busqueda__boton:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .barra-busqueda__boton:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
-/* ---------- Funcionalidad 3: historial ---------- */
+/* ============== Funcionalidad 1: lista de coincidencias ============== */
+.lista-ciudades {
+  background: var(--vidrio);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--vidrio-borde);
+  border-radius: var(--radio);
+  padding: 12px 14px;
+}
+
+.lista-ciudades__titulo {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+}
+
+.lista-ciudades__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lista-ciudades__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--texto);
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.lista-ciudades__item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lista-ciudades__bandera {
+  font-size: 1.3rem;
+}
+
+/* ===================== Funcionalidad 3: historial ===================== */
 .historial__cabecera {
   display: flex;
   align-items: center;
@@ -75,8 +297,14 @@
 .historial__limpiar {
   border: none;
   background: none;
-  color: var(--acento);
+  color: var(--texto);
+  text-decoration: underline;
   font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.historial__limpiar:hover {
+  opacity: 1;
 }
 
 .historial__lista {
@@ -89,22 +317,25 @@
 }
 
 .historial__item {
-  padding: 6px 12px;
-  border: 1px solid var(--borde);
+  padding: 7px 13px;
+  border: 1px solid var(--vidrio-borde);
   border-radius: 999px;
-  background: var(--superficie);
+  background: var(--vidrio);
+  backdrop-filter: blur(6px);
   color: var(--texto);
   font-size: 0.85rem;
-  transition: border-color 0.2s;
+  transition: background 0.15s;
 }
 
 .historial__item:hover {
-  border-color: var(--acento);
+  background: var(--vidrio-fuerte);
 }
 
-/* ---------- Funcionalidad 2: tarjeta del clima ---------- */
+/* ===================== Funcionalidad 2: tarjeta del clima ===================== */
 .tarjeta-clima {
-  background: var(--superficie);
+  background: var(--vidrio);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--vidrio-borde);
   border-radius: var(--radio);
   box-shadow: var(--sombra);
   padding: 24px;
@@ -114,54 +345,130 @@
 .tarjeta-clima__cabecera {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 2px;
 }
 
 .tarjeta-clima__ciudad {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 }
 
 .tarjeta-clima__pais {
   color: var(--texto-suave);
   font-weight: 400;
+  font-size: 1rem;
 }
 
-.tarjeta-clima__icono {
-  margin: 4px 0;
+.tarjeta-clima__hora {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--texto-suave);
+}
+
+.tarjeta-clima__principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.tarjeta-clima__emoji {
+  font-size: 4rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
 
 .tarjeta-clima__temperatura {
-  font-size: 3rem;
+  margin: 0;
+  font-size: 3.4rem;
   font-weight: 700;
-  margin: 4px 0;
 }
 
 .tarjeta-clima__descripcion {
   text-transform: capitalize;
   color: var(--texto-suave);
-  margin: 0 0 16px;
+  margin: 4px 0 18px;
+  font-size: 1.05rem;
 }
 
 .tarjeta-clima__detalles {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
   margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
-.tarjeta-clima__detalle dt {
-  font-size: 0.8rem;
+@media (min-width: 420px) {
+  .tarjeta-clima__detalles {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.detalle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: help;
+  outline: none;
+}
+
+.detalle:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 1px;
+}
+
+/* Tooltip explicativo: oculto por defecto, visible al pasar el cursor o
+   al enfocar el cuadro con el teclado. */
+.detalle__info {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: max-content;
+  max-width: 190px;
+  padding: 8px 10px;
+  background: rgba(12, 18, 32, 0.97);
+  border: 1px solid var(--vidrio-borde);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.35;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 5;
+}
+
+.detalle:hover .detalle__info,
+.detalle:focus-visible .detalle__info {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.detalle__icono {
+  font-size: 1.3rem;
+}
+
+.detalle__etiqueta {
+  font-size: 0.72rem;
   color: var(--texto-suave);
 }
 
-.tarjeta-clima__detalle dd {
-  margin: 2px 0 0;
-  font-size: 1.1rem;
+.detalle__valor {
+  margin: 0;
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
-/* ---------- Funcionalidad 4: indicador de carga ---------- */
+/* ===================== Funcionalidad 4: indicador de carga ===================== */
 .indicador-carga {
   display: flex;
   flex-direction: column;
@@ -171,10 +478,10 @@
 }
 
 .indicador-carga__circulo {
-  width: 38px;
-  height: 38px;
-  border: 4px solid var(--borde);
-  border-top-color: var(--acento);
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: girar 0.8s linear infinite;
 }
@@ -190,19 +497,25 @@
   }
 }
 
-/* Respeta a quien prefiere menos movimiento (accesibilidad). */
-@media (prefers-reduced-motion: reduce) {
-  .indicador-carga__circulo {
-    animation-duration: 2s;
-  }
-}
-
-/* ---------- Funcionalidad 5: mensaje de error ---------- */
+/* ===================== Funcionalidad 5: mensaje de error ===================== */
 .mensaje-error {
-  background: var(--superficie);
-  border: 1px solid var(--error);
+  background: var(--error-fondo);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--error);
   border-radius: var(--radio);
-  padding: 16px;
+  padding: 14px 16px;
   text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+/* Accesibilidad: respeta a quien prefiere menos movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  .gota,
+  .copo,
+  .nube,
+  .sol,
+  .estrella,
+  .indicador-carga__circulo {
+    animation: none;
+  }
 }

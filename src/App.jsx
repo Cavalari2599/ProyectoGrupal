@@ -1,58 +1,99 @@
 import { useEffect, useCallback } from 'react'
 import { useClima, Estado } from './hooks/useClima.js'
+import { useBuscadorCiudades, EstadoBusqueda } from './hooks/useBuscadorCiudades.js'
 import { useHistorialBusquedas } from './hooks/useHistorialBusquedas.js'
+import { FondoClima } from './componentes/FondoClima.jsx'
 import { BarraBusqueda } from './componentes/BarraBusqueda.jsx'
+import { ListaCiudades } from './componentes/ListaCiudades.jsx'
 import { TarjetaClima } from './componentes/TarjetaClima.jsx'
 import { HistorialBusquedas } from './componentes/HistorialBusquedas.jsx'
 import { IndicadorCarga } from './componentes/IndicadorCarga.jsx'
 import { MensajeError } from './componentes/MensajeError.jsx'
+import { temaPorClima } from './utilidades/tema.js'
 import { CIUDAD_POR_DEFECTO } from './configuracion/constantes.js'
 import './App.css'
 
+const TEMA_INICIAL = 'despejado-dia'
+
 /**
- * Componente raíz: compone las funcionalidades y coordina el flujo.
- * No contiene lógica de negocio; esa vive en los hooks y el servicio (SRP).
+ * Componente raíz: compone las funcionalidades y coordina el flujo
+ * buscar -> elegir ciudad -> mostrar clima. No contiene lógica de negocio;
+ * esa vive en los hooks y el servicio (SRP).
  */
 function App() {
-  const { clima, estado, error, buscar } = useClima()
+  const { clima, estado, error, consultar } = useClima()
+  const {
+    candidatos,
+    estado: estadoBusqueda,
+    error: errorBusqueda,
+    buscar: buscarCandidatos,
+    limpiar: limpiarCandidatos,
+  } = useBuscadorCiudades()
   const { historial, agregarCiudad, limpiarHistorial } = useHistorialBusquedas()
 
-  // Busca una ciudad y, si hay éxito, la registra en el historial usando el
-  // nombre canónico que devuelve la API (clima.ciudad) para evitar duplicados.
-  const buscarYRegistrar = useCallback(
+  // Consulta el clima de una ciudad concreta (con coordenadas) y la registra
+  // en el historial. Limpia antes la lista de candidatos para cerrarla.
+  const seleccionarCiudad = useCallback(
     async (ciudad) => {
-      const datos = await buscar(ciudad)
-      if (datos) agregarCiudad(datos.ciudad)
+      limpiarCandidatos()
+      const datos = await consultar(ciudad.lat, ciudad.lon)
+      if (datos) agregarCiudad(ciudad)
     },
-    [buscar, agregarCiudad],
+    [limpiarCandidatos, consultar, agregarCiudad],
+  )
+
+  // Busca coincidencias por nombre. Si solo hay una, la selecciona directo;
+  // si hay varias, se muestran para que la persona elija.
+  const manejarBusqueda = useCallback(
+    async (texto) => {
+      const resultados = await buscarCandidatos(texto)
+      if (resultados.length === 1) {
+        seleccionarCiudad(resultados[0])
+      }
+    },
+    [buscarCandidatos, seleccionarCiudad],
   )
 
   // Carga la ciudad por defecto al abrir la app (requisito de la demo).
   useEffect(() => {
-    buscarYRegistrar(CIUDAD_POR_DEFECTO)
-  }, [buscarYRegistrar])
+    seleccionarCiudad(CIUDAD_POR_DEFECTO)
+  }, [seleccionarCiudad])
+
+  const tema = clima ? temaPorClima(clima.condicionId, clima.esDeDia) : TEMA_INICIAL
+  const ocupado = estado === Estado.CARGANDO || estadoBusqueda === EstadoBusqueda.CARGANDO
 
   return (
-    <main className="app">
-      <h1 className="app__titulo">🌤️ App del Clima</h1>
+    <>
+      <FondoClima tema={tema} />
 
-      <BarraBusqueda
-        alBuscar={buscarYRegistrar}
-        deshabilitado={estado === Estado.CARGANDO}
-      />
+      <main className="app">
+        <h1 className="app__titulo">🌤️ App del Clima</h1>
 
-      <HistorialBusquedas
-        historial={historial}
-        alSeleccionar={buscarYRegistrar}
-        alLimpiar={limpiarHistorial}
-      />
+        <BarraBusqueda alBuscar={manejarBusqueda} deshabilitado={ocupado} />
 
-      <section className="app__resultado">
-        {estado === Estado.CARGANDO && <IndicadorCarga />}
-        {estado === Estado.ERROR && <MensajeError mensaje={error} />}
-        {estado === Estado.EXITO && clima && <TarjetaClima clima={clima} />}
-      </section>
-    </main>
+        {estadoBusqueda === EstadoBusqueda.SIN_RESULTADOS && (
+          <MensajeError mensaje="No se encontraron ciudades con ese nombre." />
+        )}
+        {estadoBusqueda === EstadoBusqueda.ERROR && (
+          <MensajeError mensaje={errorBusqueda} />
+        )}
+        {candidatos.length > 1 && (
+          <ListaCiudades ciudades={candidatos} alSeleccionar={seleccionarCiudad} />
+        )}
+
+        <HistorialBusquedas
+          historial={historial}
+          alSeleccionar={seleccionarCiudad}
+          alLimpiar={limpiarHistorial}
+        />
+
+        <section className="app__resultado">
+          {estado === Estado.CARGANDO && <IndicadorCarga />}
+          {estado === Estado.ERROR && <MensajeError mensaje={error} />}
+          {estado === Estado.EXITO && clima && <TarjetaClima clima={clima} />}
+        </section>
+      </main>
+    </>
   )
 }
 
