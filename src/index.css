@@ -1,14 +1,25 @@
 /* Variables base y reset. El color de fondo real lo pinta <FondoClima>
    según el clima; aquí solo queda un respaldo y los estilos comunes.
    Sin librerías externas (requisito del proyecto). */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
 :root {
   --texto: #ffffff;
   --texto-suave: rgba(255, 255, 255, 0.78);
 
   /* Superficies tipo "vidrio" (glassmorphism), legibles sobre cualquier clima. */
-  --vidrio: rgba(255, 255, 255, 0.12);
-  --vidrio-fuerte: rgba(255, 255, 255, 0.22);
-  --vidrio-borde: rgba(255, 255, 255, 0.28);
+  --vidrio: rgba(255, 255, 255, 0.1);
+  --vidrio-fuerte: rgba(255, 255, 255, 0.2);
+  --vidrio-borde: rgba(255, 255, 255, 0.25);
+
+  /* Acento monocromático: azul vivo, más saturado que los fondos, para dar
+     identidad a botones, foco y la temperatura sin salir de la familia. */
+  --acento: #3b9eff;
+  --acento-claro: #9ad0ff;
+  --acento-borde: rgba(59, 158, 255, 0.55);
+  --acento-vidrio: rgba(59, 158, 255, 0.2);
+  --acento-vidrio-fuerte: rgba(59, 158, 255, 0.32);
 
   --error: #ffe0e0;
   --error-fondo: rgba(190, 30, 30, 0.4);
@@ -16,7 +27,10 @@
   --radio: 18px;
   --sombra: 0 16px 40px rgba(0, 0, 0, 0.28);
 
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --fuente-base: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --fuente-display: 'Space Grotesk', var(--fuente-base);
+
+  font-family: var(--fuente-base);
   color: var(--texto);
   -webkit-font-smoothing: antialiased;
 }

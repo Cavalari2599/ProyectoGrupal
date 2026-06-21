@@ -9,6 +9,7 @@ import { TarjetaClima } from './componentes/TarjetaClima.jsx'
 import { HistorialBusquedas } from './componentes/HistorialBusquedas.jsx'
 import { IndicadorCarga } from './componentes/IndicadorCarga.jsx'
 import { MensajeError } from './componentes/MensajeError.jsx'
+import { IconoLogo } from './componentes/iconos.jsx'
 import { temaPorClima } from './utilidades/tema.js'
 import { CIUDAD_POR_DEFECTO } from './configuracion/constantes.js'
 import './App.css'
@@ -67,7 +68,10 @@ function App() {
       <FondoClima tema={tema} />
 
       <main className="app">
-        <h1 className="app__titulo">🌤️ App del Clima</h1>
+        <h1 className="app__titulo">
+          <IconoLogo className="app__titulo-icono" />
+          App del Clima
+        </h1>
 
         <BarraBusqueda alBuscar={manejarBusqueda} deshabilitado={ocupado} />
 
